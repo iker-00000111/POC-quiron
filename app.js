@@ -4,9 +4,9 @@ import {
 } from "https://cdn.jsdelivr.net/npm/@azure/msal-browser@4.11.0/+esm";
 
 const APP_CONFIG = {
-  clientId: "dcde18b5-ab34-437e-b3b9-fa080940e4f8",
+  clientId: "27731670-72d7-455a-a1c1-c52e75c0cfd3",
   tenantId: "6f167842-765d-4bda-a56e-9d433bc27739",
-  apiScope: "api://dcde18b5-ab34-437e-b3b9-fa080940e4f8/access",
+  apiScope: "api://dcde18b5-ab34-437e-b3b9-fa080940e4f8/access_as_user",
   apiBaseUrl: "http://localhost:3000",
 };
 
@@ -38,27 +38,31 @@ const logoutButton = document.getElementById("logoutButton");
 const welcomeText = document.querySelector(".welcome");
 
 function renderCitas() {
+  console.log("👉 Ejecutando renderCitas. ¿Cuántas citas hay corporativas?:", citas.length);
+  
   if (!citas.length) {
     citasBody.innerHTML = `
       <tr>
-        <td colspan="4">No hay datos para mostrar.</td>
+        <td colspan="3">No hay datos para mostrar.</td>
       </tr>
     `;
     return;
   }
 
+  // Mapeamos los campos exactos que te ha escupido la consola: Id, Nombre, Email
   citasBody.innerHTML = citas
     .map(
       (cita) => `
         <tr>
-          <td>${cita.username}</td>
-          <td>${cita.nombreApellidos}</td>
-          <td>${cita.correoElectronico}</td>
-          <td>${cita.fechaHoraCita}</td>
+          <td>${cita.Id}</td>
+          <td>${cita.Nombre}</td>
+          <td>${cita.Email}</td>
         </tr>
       `
     )
     .join("");
+    
+  console.log("✅ HTML inyectado con éxito en el tbody.");
 }
 
 function setStatus(message = "", type = "info") {
@@ -103,7 +107,7 @@ async function getApiToken() {
 
 async function fetchCitas() {
   const token = await getApiToken();
-  const response = await fetch(`${APP_CONFIG.apiBaseUrl}/api/empleados`, {
+  const response = await fetch(`${APP_CONFIG.apiBaseUrl}/api/datos`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -135,6 +139,10 @@ async function login() {
 
     currentAccount = loginResponse.account;
     const apiData = await fetchCitas();
+    
+    // 🌟 AÑADE ESTA LÍNEA AQUÍ PARA VER LOS DATOS EN LA CONSOLA (F12)
+    console.log("¡DATOS REALES DE CLIENTES!", apiData);
+
     citas = Array.isArray(apiData) ? apiData : [];
     renderCitas();
     setStatus("Datos cargados correctamente.", "info");
@@ -173,6 +181,7 @@ loginButton.addEventListener("click", login);
 logoutButton.addEventListener("click", logout);
 
 await msalInstance.initialize();
+await msalInstance.handleRedirectPromise();
 const accounts = msalInstance.getAllAccounts();
 if (accounts.length > 0) {
   currentAccount = accounts[0];

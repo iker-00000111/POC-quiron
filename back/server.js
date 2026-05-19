@@ -49,10 +49,13 @@ const validarTokenEntraID = (req, res, next) => {
 
     // Validar el token contra las claves públicas de Microsoft
     jwt.verify(token, getKey, {
-        audience: `api://${process.env.BACKEND_CLIENT_ID}`, // Valida que el token sea para esta API
-        issuer: `https://login.microsoftonline.com/${process.env.TENANT_ID}/v2.0`
+    audience: [
+        process.env.BACKEND_CLIENT_ID, 
+        `api://${process.env.BACKEND_CLIENT_ID}`
+    ],
     }, (err, decoded) => {
         if (err) {
+            console.error("❌ Error de validación del Token:", err.message);
             return res.status(403).json({ error: 'Token inválido o expirado.' });
         }
         // Guardamos los datos del usuario autenticado en la petición por si hiciesen falta
@@ -72,7 +75,7 @@ app.get('/api/datos', validarTokenEntraID, async (req, res) => {
         let pool = await sql.connect(dbConfig);
         
         // Realizar la consulta a la tabla que creamos en el portal
-        let result = await pool.request().query('SELECT Id, Nombre, Puesto, Departamento FROM EmpleadosPOC');
+        let result = await pool.request().query('SELECT * FROM Clientes');
         
         // Responder al frontend con los datos obtenidos
         res.json(result.recordset);
