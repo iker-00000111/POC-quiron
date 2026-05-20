@@ -7,7 +7,7 @@ const APP_CONFIG = {
   clientId: "27731670-72d7-455a-a1c1-c52e75c0cfd3",
   tenantId: "6f167842-765d-4bda-a56e-9d433bc27739",
   apiScope: "api://dcde18b5-ab34-437e-b3b9-fa080940e4f8/access_as_user",
-  apiBaseUrl: "https://api-quiron-back.azurewebsites.net",
+  apiBaseUrl: "https://api-quiron-back-c2dzczcuewh8ercs.westeurope-01.azurewebsites.net",
 };
 
 const authority = `https://login.microsoftonline.com/${APP_CONFIG.tenantId}`;
