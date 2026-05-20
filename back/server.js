@@ -6,7 +6,9 @@ const jwksClient = require('jwks-rsa');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://blue-pond-0fec4b703.7.azurestaticapps.net"
+}));
 app.use(express.json());
 
 // ==========================================
