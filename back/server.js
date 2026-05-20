@@ -10,6 +10,10 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN || "https://blue-pond-0fec4b703.7.azurestaticapps.net"
 }));
 app.use(express.json());
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  next();
+});
 
 const dbConfig = {
     server: process.env.DB_SERVER,
